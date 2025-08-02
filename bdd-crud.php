@@ -27,15 +27,25 @@ function create_user(string $email,string $password) : int | null {
     } else {
         $user_id = null; // In case of failure
     }
-
     // TODO
     return $user_id;
 }
 
+
+function get_user_by_username(string $username) : array | null {
+    $database = connect_database();
+    $prepare = $database->prepare("SELECT * FROM users WHERE username = ?");
+    $prepare->execute([$username]);
+    $user = $prepare->fetch(PDO::FETCH_ASSOC);
+    return $user ?: null;
+}
+
+
+
 // Read (login)
 function get_user(int $id) : array | null {
     $database = connect_database();
-    $prepare = $database->prepare("SELECT * FROM users WHERE id = :id");
+    $prepare = $database->prepare("SELECT * FROM users WHERE id = ?");
     $prepare->execute([$id]);
     $user = $prepare->fetch(PDO::FETCH_ASSOC);
     // TODO 
@@ -77,7 +87,7 @@ function add_task(string $name, string $description, int $user_id): int | null {
 //Read
 function get_task(int $id) : array | null {
     $database = connect_database();
-    $prepare = $database->prepare("SELECT * FROM tasks WHERE id = :id");
+    $prepare = $database->prepare("SELECT * FROM tasks WHERE id = ?");
     $prepare->execute([$id]);
     $task = $prepare->fetch(PDO::FETCH_ASSOC);
     if (!$task) {
@@ -98,25 +108,15 @@ function get_all_task_by_user(int $user_id) : array | null {
 }
 
 // Delete (BONUS)
+
 function delete_task(int $id) : bool{
     $database = connect_database();
-    $prepare = $database->prepare("DELETE FROM tasks WHERE id = :id");
-    $isSuccessful = $prepare->execute([$id]);
+    $prepare = $database->prepare("DELETE FROM tasks WHERE id = ?");
+    $isSuccessful = $prepare->execute([$id]); 
     if (!$isSuccessful) {
         return false; // Deletion failed
     }
-    // TODO
     return $isSuccessful;
 }
 
 
-function validate_task(int $id) : bool {
-    $database = connect_database();
-    $prepare = $database->prepare("UPDATE tasks SET is_validated = 1 WHERE id = :id");
-    $isSuccessful = $prepare->execute([$id]);
-    if (!$isSuccessful) {
-        return false; // Validation failed
-    }
-    // TODO
-    return $isSuccessful;
-}

@@ -1,7 +1,6 @@
 <?php
 session_start();
 require_once "bdd-crud.php";
-// TODO Connection Utilisateur via la session
 
 $message = "";
 
@@ -9,14 +8,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
     if ($username && $password) {
-        $user = get_user($username);
+        $user = get_user_by_username($username);
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
-
             header("Location: index.php");
             exit();
-        }
-        else {
+        } else {
             $message = "Identifiants incorrects. Veuillez réessayer.";
         }
     }
@@ -30,9 +27,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Document</title>
+    
 </head>
 <body>
+<div class ="imgg">
+<img src="task.png" alt="Task Image" >
+</div>
+
+    <div class="login-container">
     <h1>Login</h1>
     <!-- TODO Formulaire de connexion -->
 <?php if ($message): ?>
@@ -40,15 +44,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
 <form action="" method="post">
-    <label for="username">Email :</label>
+    <label for="username">Username :</label>
     <input type="text" id="username" name="username" required>
     <br>
-    <label for="password">Mot de passe :</label>
+    <label for="password">Password :</label>
     <input type="password" id="password" name="password" required>
     <br>
-    <button type="submit">Se connecter</button>
+    <button type="submit">Connect</button>
+    
+    <a href="inscription.php">Sign up</a>
+</div>
 
-
-    <a href="inscription.php">Pas de compte ? S'inscrire</a>
 </body>
 </html>
